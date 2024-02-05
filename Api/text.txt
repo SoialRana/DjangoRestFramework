@@ -1,0 +1,150 @@
+API-> Application Programming Interface
+
+An API is a software intermediary that allows two or more application to talk to each other.
+Api type in terms of Release Policies->
+-> Private- It can be used within the orgainization 
+-> Partner- It can be used within buisness Partner
+-> Public- It can be used any third party developers
+
+Application(consumer)----Google map Api------ Google map(provider)
+
+How use Api?
+
+Web API-> An API which is interface for web is called as webAPI
+It may consist of one or more endpoints to define request and response
+
+How web api works?
+mobile(client)---------webAPI------------webapplication----------database
+              --------       ------------
+
+->Client makes httpRequest to api
+->Api will communication to web application/Database (if needed)
+->Web application/Database provides required data to Api
+->Api returns data to client
+NOTE: Json data or XML data
+
+How to use web api?
+-> Register/Sign-up to Api
+-> Api may provide API key for Authentiation purpose
+     Api key/Token: 2342523ksfds234234ksdfe2342
+-> Whenever you need to communicate with server make Request to Api with Api key 
+     Http://geekyshows.com/?key=2342325dfsfksd35435sdflkef
+-> If Api key authentication succed, Api will provide required data
+
+
+-----------REST API---------
+REST-- It is an architechtural guideline to develop webAPI
+RestApi-- The API which is developed using REST is known as REST API/RESTful API
+
+How RESTweb api works?
+mobile(client)---------webAPI------------webapplication----------database
+              --------       ------------
+
+->Client makes httpRequest to api
+->Api will communication to web application/Database (if needed)
+->Web application/Database provides required data to Api
+->Api returns data to client
+NOTE: Json data or XML data
+
+
+REST API---CRUD Operations:-
+
+  Operations--------- Http Method---------- Description
+  Create    --------- POST       ----------Creating/Posting/Inserting Data 
+  Read      --------- GET        ----------Reading/Getting/Retrieving Data
+  Update  -----------PUT, PATCH-----------Updating data (complete UPdate--PUT, Partial Update- Patch)
+  Delete ------------ Delete------------ Deleting Data
+
+
+---------DjangoRestFramework---------
+DjangoRestFramework is a powerful and flexible toolkit for building web apis
+-> The web browsable Api is a huge usability win for your developers
+-> Authentication policies including packages for OAuth1 and Oauth2
+-> Serialization that supports both ORM and non-ORM data sources
+-> Customizable all the way down-just use regular function based views if you don't need the more powerfull features
+-> Extensive documentation and great community support 
+-> Used and trusted by internationality recognized companies including Mozilla , Red Hat , Hcroku and Ebentbrite
+
+----pip freeze
+----pip uninstall DjangoRestFramework
+----django-admin --version
+
+
+
+------------------Serializer-----------
+Python JSON->> Python has a built in package called json, which is used to work with json data 
+dumps(data)--This is used to convert python object into json string. Example-
+To use json package first we have to import it. 
+import json
+python_data ={'name':'Rahim','roll':101} # this is python data 
+json_data=json.dumps(python_data)
+print(json_data)
+{"name":"Rahim","roll":101} # this is json data 
+
+loads(data)-- This is used to parse json string. Example
+import json
+json_data={"name":"Rahim","roll":101}
+parsed_data= json.loads(json_data)
+print(parsed_data)
+{'name':'Rahim','roll':101}
+
+python--> json = dumps()
+json---> python= loads()
+
+
+**Serializers----> In DjangoRestFramework, Serializers are responsible for converting complex data 
+such as querysets and model instances to native python data types(called serialization) that can
+then be easily rendered into JSON,XML or other content types which is understandable by Frontend
+
+Serializers are also responsible for deserialization which means it allows parsed data to be converted
+back into complex types,after first validating the incoming data.
+--> Serialization
+--> deserialization
+** Serializer class: A Serializer class is very similar to a django Form and ModelForm class and includes
+similar validation flags on the various fields, such as required, max_length and default. 
+* DRF provides a serializer class which gives you a powerful,generic way to control the output of 
+your responses, as well as a ModelSerializer class which provides a useful shortcut for creating 
+serializers that deal with model instancs and querysets. 
+
+**How to create serializers class??
+Create a separtes serializers.py file to write all serializer 
+Model------------sql commands----------table
+      Makemigrations          Migrate
+
+
+*Serialization--> The process of converting complex data such as querysets and model instances to
+native python datatypes are called as Serializationin DRF.
+
+-> Creating model instance stu 
+      stu= Students.objects.get(id=1)
+-> converting model instance stu to Python Dict/Serializing object 
+      serializer=StudentSerializer(stu)
+
+-> Creating Query Set stu 
+      stu= Students.objects.all()
+-> converting Query Set stu to List of python Dict/Serializing Query Set 
+      serializer=StudentSerializer(stu, many =True) # ekhane object nicchi 
+
+*serializer.data----> This is serialized data..... print(serializer.data)
+* JSONRenderer: This is used to render serialized data into JSON which is understandable by Frond End
+importing JSONRenderer
+from rest_framework.renders import JSONRenderer
+
+*Render the data into Json
+json_data=JSONRenderer().render(serializer.data)
+
+*JsonResponse--> JsonResponse(data, encoder=DjangoJSONEncoder,safe=True,json_dumps_params=None,**kwargs)
+An httpResponse subclass that helps to create a JSON-encoded response. It inherits most behavior
+from its superclass with a couple differences:
+--> Its default content-Type header is set to application/json
+--> The first parameter,data should be a dict(dictionary) instance. If the safe parameter is set to False it can 
+be any JSON-serializable object.
+--> The encoder which defaults to django.core.serializers.json.DjangoJSONEncoder,will be used to 
+ serialize the data.
+--> The safe boolean parameter default to True. If it's set to False, any object can be passed for 
+ serialization(otherwise only dict instance are allowed). If safe is True and a non-dict object is 
+ passed as the first argument , a type error will be raised.
+-> The json_dumps_params parameter is a dictionary of  keyword arguments to pass to the json.dumps()
+  call used to generate the response
+
+
