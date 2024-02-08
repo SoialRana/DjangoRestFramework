@@ -148,22 +148,3 @@ be any JSON-serializable object.
   call used to generate the response
 
 
-
-------------------ModelSerializer Class---------------
--The ModelSerializer class provides a shortcut that lets you automatically create a serializer class 
-with fields that correspond to the Model field.
--The ModelSerializer class is the same as a regular serializer class except that :
-->> It will automatically generate a set of fields for you, based on the model.
-->> It will automatically generate validation for the serializer, such as unique_together validators
-->> It includes simple default implementation of create() and update()
-
-**Create ModelSerializer Class:
-from rest_framework import serializers
-class StudentSerializer(serializers.ModelSerializer)
-      class Meta:
-            model=Student 
-            fields=['id','name','roll','city']
-
-fields='__all__'
-exclude=['roll']
-
