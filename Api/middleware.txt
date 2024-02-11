@@ -57,7 +57,7 @@ class MyMiddleware:
     def __call__(self,request):
         # Code to be executed for each request before the view (and later middleware) are called.
         response=self.get_response(request)
-        # Code to be executed for each request/response agter the view is called.
+        # Code to be executed for each request/response after the view is called.
         return response
 
 
@@ -102,7 +102,7 @@ Where,
 -> Neither view_args nor view_kwargs include the first view argument(request).
 
 
-** process_exception(request,exception)- Django calls process_exception() when a view riase an exception
+** process_exception(request,exception)- Django calls process_exception() when a view raise an exception
 -> It should return either None or an HttpResponse object
 -> If it returns a HttpResponse object, the template response and response middleware will be applied
    and the resulting response returned to the browser. Otherwise, default exception handling kichs in.
@@ -120,7 +120,7 @@ Note:- Middleware are run in reverse order during the response phase, which incl
    executing. if the response instance has a render() method. indicating that it a TemplateResponse or equivalent
 
 --> It must return a response object that implements a render method.
---> It could agter the given response by changing response.template_name and response.context_data,
+--> It could alter the given response by changing response.template_name and response.context_data,
     or it could create and return a brand_new TemplateResponse or equivalent.
 --> You don't need to explicitly render response,response will be automatically rendered once all
     template response middleware has been called
@@ -154,7 +154,7 @@ Note:- Middleware are run in reverse order during the response phase, which incl
 
 
 
-** There are three circumstances unser which a TemplateResponse will be rendered: 
+** There are three circumstances under which a TemplateResponse will be rendered: 
 -> When the TemplateResponse instance is explicitly rendered, using the Simple TemplateResponse()method
 -> When the content of the response is explicitly set by assigning response content 
 -> After passing through template response middleware, but before passing through response middleware

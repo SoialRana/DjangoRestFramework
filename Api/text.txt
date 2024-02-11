@@ -1,4 +1,4 @@
-API-> Application Programming Interface
+'"<API-> Application Programming Interface>"'
 
 An API is a software intermediary that allows two or more application to talk to each other.
 Api type in terms of Release Policies->
@@ -57,11 +57,12 @@ REST API---CRUD Operations:-
 
 
 ---------DjangoRestFramework---------
-DjangoRestFramework is a powerful and flexible toolkit for building web apis
+DjangoRestFramework is a powerful and flexible toolkit for building web APIs
 -> The web browsable Api is a huge usability win for your developers
 -> Authentication policies including packages for OAuth1 and Oauth2
 -> Serialization that supports both ORM and non-ORM data sources
--> Customizable all the way down-just use regular function based views if you don't need the more powerfull features
+-> Customizable all the way down-just use regular function based views if you don't need the
+ more powerfull features
 -> Extensive documentation and great community support 
 -> Used and trusted by internationality recognized companies including Mozilla , Red Hat , Hcroku and Ebentbrite
 
@@ -92,7 +93,8 @@ python--> json = dumps()
 json---> python= loads()
 
 
-**Serializers----> In DjangoRestFramework, Serializers are responsible for converting complex data 
+**Serializers----> 
+In DjangoRestFramework, Serializers are responsible for converting complex data 
 such as querysets and model instances to native python data types(called serialization) that can
 then be easily rendered into JSON,XML or other content types which is understandable by Frontend
 
@@ -100,8 +102,8 @@ Serializers are also responsible for deserialization which means it allows parse
 back into complex types,after first validating the incoming data.
 --> Serialization
 --> deserialization
-** Serializer class: A Serializer class is very similar to a django Form and ModelForm class and includes
-similar validation flags on the various fields, such as required, max_length and default. 
+** Serializer class: A Serializer class is very similar to a django Form and ModelForm class and
+ includes similar validation flags on the various fields, such as required, max_length and default. 
 * DRF provides a serializer class which gives you a powerful,generic way to control the output of 
 your responses, as well as a ModelSerializer class which provides a useful shortcut for creating 
 serializers that deal with model instancs and querysets. 
@@ -113,7 +115,7 @@ Model------------sql commands----------table
 
 
 *Serialization--> The process of converting complex data such as querysets and model instances to
-native python datatypes are called as Serializationin DRF.
+native python datatypes are called as Serialization in DRF.
 
 -> Creating model instance stu 
       stu= Students.objects.get(id=1)
@@ -137,8 +139,8 @@ json_data=JSONRenderer().render(serializer.data)
 An httpResponse subclass that helps to create a JSON-encoded response. It inherits most behavior
 from its superclass with a couple differences:
 --> Its default content-Type header is set to application/json
---> The first parameter,data should be a dict(dictionary) instance. If the safe parameter is set to False it can 
-be any JSON-serializable object.
+--> The first parameter,data should be a dict(dictionary) instance. If the safe parameter is set
+ to False it can be any JSON-serializable object.
 --> The encoder which defaults to django.core.serializers.json.DjangoJSONEncoder,will be used to 
  serialize the data.
 --> The safe boolean parameter default to True. If it's set to False, any object can be passed for 
