@@ -1,6 +1,6 @@
 --------Middleware-----------
 **Middleware is a framework of hooks into django's request/response processing
-It is a hig,low-level"plugin" systemfor globally altering Django's input or outpur.
+It is a high,low-level"plugin" systemfor globally altering Django's input or outpur.
 Each Middleware component is responsible for doing some specific function.
 --Built in Middleware
 --Custom Middleware
