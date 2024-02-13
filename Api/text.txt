@@ -110,7 +110,7 @@ serializers that deal with model instancs and querysets.
 
 **How to create serializers class??
 Create a separtes serializers.py file to write all serializer 
-Model------------sql commands----------table
+Model------------sql Query----------table
       Makemigrations          Migrate
 
 
@@ -149,4 +149,341 @@ from its superclass with a couple differences:
 -> The json_dumps_params parameter is a dictionary of  keyword arguments to pass to the json.dumps()
   call used to generate the response
 
+
+
+
+------------- Serializer Field--------
+* Serializer fields handle converting primitive values and internal datatypes. They also deal with validating
+input values, as well as Retrieving and setting the values from their parent objects.
+Syntax: 
+from rest_framework import serializers
+serializers.Field_name()   Example:-
+
+from rest_framework import serializers
+serializers.CharField()
+
+**CharField- A text representation.Optionally validates the text to be shorter than max_length and longer than min_length
+Syntax:= CharField(max_length=None,min_length=None,allow_blank=False,trim_whitespace=True)
+-> max_length= validates that the input contains no more than this number of character
+-> max_length= validates that the input contains no fewer than this number of character
+-> allow_blank= If set to True then the empty string should be considered a valid value. If set to false then
+   the empty string is considered invalid and raise a validation error.default to False
+-> trim_whitespace= If set to True then leading and trailing whitespace is trimmed.Defaults to True
+-> The allow null option is also available for string fields,although its usage is discouraged in favor of allow_blank
+
+**IntergerField- 
+
+
+
+
+-------Core Arguments-------
+** label-- A short text string that may be used as the name of the field in HTML. form fieds or other description elements.
+** validation-- A list 
+
+
+
+
+---------- Deserialization-----------  Serializers are also responsible for deserialization which means it allows parsed data to be converted back into complex types, after first validating the incoming data 
+
+Creating Serializer object
+serializer = StudentSerializer(data=parsed_data)
+
+validated Data
+serializer.is_valid()
+
+serializer.validated_data
+serializer.errors
+
+---->>>> BytesIO()----->>
+A stream implementation using an in memory bytes buffer. It inherits BufferedIOBase. The buffer is discarded when the close()method is called.
+
+import io 
+stream = io.BytesIO(json_data)
+
+
+---------->>>>>>>>>>>>--  JSONParser() ----------->>>>>>>>>
+
+This is used to parse json data to python native datatype.
+from rest_framework.parses import JSONParser
+parsed_data = JSONParser().parse(stream)
+
+
+----->>>>-------- Create Data/Insert Data
+
+from rest_framework import serializers
+class StudentSerializer(serializers.Serializer):
+name = serializers.CharField(max_length=100)
+roll = serializers.IntegerField()
+city = serializers.CharField(max_length=100)
+
+def create(self, validated_data):
+return Student.objects.create(**validate_data)
+
+
+
+------->>>>>>>>>>>--------- Update Data 
+from rest_framework import serializers
+class StudentSerializer(serializers.Serializer):
+name = serializers.CharField(max_length=100)
+roll = serializers.IntegerField()
+city = serializers.CharField(max_length=100)
+def update(self, instance, validated_data):
+instance.name = validated_data.get('name',instance.name)
+instance.roll = validated_data.get('roll', instance.roll)
+instance.city = validated_data.get('city', instance.city)
+instance.save()
+return instance
+
+----------->>>>>>>>>>>------------ complete Update Data
+
+By default, serializers must be passed values for all required fields or They will be raise validation errors.
+Required All Data from Front End/Client
+serializer=StudentSerializer(stu, data=pythondata)
+if serializer.is_valid():
+serializer.save()
+
+
+
+---------->>>>>>>>>>------------- Partial Update Data
+
+
+
+Partial Update - All Data not required
+serializer = StudentSerializer(stu, data=pythondata, partial = True)
+if serializer.is_valid():
+serializer.save()
+
+
+
+Function Based api_view------->>>>
+This wrapper provide a few bits of functionality such you receive Request instance in your view, and adding context to Response objects so that content negotation can be performed.
+The wrapper also provide behaviour such as returning 405 Method Not Allowed responses when appropriate, and handling any ParseError  exceptions that occur when accessing request.data with malformed input.
+
+By default only GET method will be excepted. other methods will respond with "405 Method Not Allowed".
+
+@api_view()
+
+@api_view(['GET', 'POST' 'PUT' 'DELETE' ])
+def function_name(request):
+     -----------------
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+@api_view(['GET'])
+def student_list(request):
+      if request.method=='GET':
+            stu = Student.objects.all()
+            serializer = StudentSerializer(stu,many=True)
+            return Response(serializer.data)
+
+
+
+
+
+
+
+------>>>>>>-------  api_view-------
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+@api_view(['POST'])
+def student_create(request):
+      if request.method=='POST':
+            serializer = StudentSerializer(data=request.data)
+            if serializer.is_valid():
+                  serializer.save()
+                  res = {'msg':'Data Created'}
+                  return Response(res, status=status.HTTP_201_CREATED)
+            return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
+      
+
+--------->>>>>>>> Request ------->>>>
+REST framework's Request objects provide flexible request parsing that allows you to treat request with JSON data or other media types in the same way that you would normally deal with form data.
+
+request.data - request.data returns the parsed content of the request body. This is similar to the standard request.POST and request.FILES attributes except that:
+-> It includes all parsed conten, including file and non-file inputs.
+-> It supports parsing the content of HTTP methods other than POST, meaning that you can access the content of PUT and PATCH request.
+-> It supports REST framework's flexible request parsing, rather than just supporting form data. For example you can handle incoming JSON data in the same way that you handle incoming form data.
+
+
+request.method -- request.method returns the uppercased string representation of the request's HTTP method.
+Browser-based PUT, PATCH and DELETE forms are transparently supported.
+
+request.query_params --  request.query_params is a more correctly named synonym for request.GET.
+
+For clarity inside your code, we recommend using request.query_params instead of the Django's standard request.GET.Doing so will help keep your codebase more correct and obvious - any HTTP method type may include query perameters, not just GET requests.
+
+
+
+
+-------------->>>  Response ------>>>>>
+REST framework supports HTTP content negotation by providing a Response class which allows you to return content that can be rendered into multiple content types, depending on the client request.
+
+Response objects are initialized with data, which should consist of native Python primitives.REST framework then uses standard HTTP content negotation to determine how it should render the final response content.
+
+Response class simply provides a nicer interface for returning content negotiated Web Api responses, that can be rendered to multiple formats.
+
+Syntax:- Response(data, status=None, template_name = None, headers=None, content_type=None)
+-> data: The unrendered, serialized data for the  response.
+-> status: A status code for the response, Defaults to 200.
+-> template_name: A template name to use only if HTML.Renderer or some other custom template renderer is the accepted renderer for the response.
+-> headers: A dictionary of HTTP headers to use in the response.
+-> content_type: The content type of the response. Typically, this will be set automatically by the renderer as determined by content negotiation, but there may be some cases where you need to specify the content type explicitely.
+
+
+
+------------->>>>>>>------------ Why use Authentiation & Permission------->>>>>>
+
+Currently our API doesn't have any restrictions on who can edit or delete Data.
+We'd ;like to have some more advanced behavior in order to make sure that:
+-> Data is always associated with a creator.
+-> Only authenticated users may create Data.
+-> Only the creator of a Data may update or delete it.
+-> Unauthenticated request should have full read-only access.
+
+
+--------->>>>>>>----------- Authentiation------->>>>>>
+Authentiation is the mechanism of associating an incoming request with a set of
+identifying creadentials, such as the user the request came from, or the token that
+it was signed with.The permission and throttling policies can then use those 
+creadentials to determine if the request should be permitted.
+
+Authentiation is always run at the very start of the view, before the permission 
+and throttling checks occur, and before any other code is allowed to proceed.
+
+REST framework provides a number of authentication schemes out of the box, and also allows you to implement custom schemes.
+-> Basic Authentiation
+-> Session Authentiation
+-> Token Authentication
+-> Remote User Authentiation
+-> Custom Authentiation
+
+
+
+------->>>>Basic Authentiation----->>>>>
+This authentication schemes uses HTTP Basic Authentiation, signed against a user's
+username and password.
+Basic authentication is generally only appropriate for testing.
+If successfully authenticated, Basic Authentiation provides the following creadentials.
+-> request.user will be a Django User instance.
+-> request.auth will be None.
+
+Unauthenticated responses that are denied permission will result in an HTTP 401 Unauthorized
+response with an appropriate WWW-Authenticate header. For example:->
+WWW-Authenticate:Basic realm = "api"
+
+Note: If you are Basic Authentiation in production you must ensure that your API
+is only available over https.
+
+You should also ensure that your API clients will always re-request the username and password at
+login, and will never store those details to persistent storage.
+
+
+
+
+---------->>>>>>>> Permission -------->>>>>>>>>
+Permissions are used to grant or deny access for different classes of users 
+to different parts of the API.
+
+Permission checks are always run at the very start of the view, before
+any other code is allowed to proceed.
+
+Permission checks will typically use the authentication information in the request.user and request.auth properties to determine if the incoming request should be permitted.
+
+
+
+--------->>>>> Permission Classes --------->>>>>>
+Permissions in REST framework are always defined as a list of permission classes.
+-> AllowAny
+-> IsAuthenticated
+-> IsAdminUser
+-> IsAuthenticatedOrReadOnly
+-> DjangoModelPermissions
+-> DjangoModelPermissionsOrReadOnly
+-> DjangoObjectPermissions
+-> Custom Permissions 
+
+
+----------->>>>>>>> AllowAny----------->>>>>
+The AllowAny permission class will allow unrestricted,
+regardless of if the request was authenticated or Unauthenticated.
+
+This permission is not strictly required, since you can achieve the same result by using an empty list or tuple for the permissions setting, but
+you may find it useful to specify this class because it makes the 
+intention explicit.
+
+
+
+----->>>>>>> IsAuthenticated ------->>>>>
+The IsAuthenticated permission class will deny permission to any
+Unauthenticated user, and allow permission otherwise.
+
+This permission is suitable if you want your API to only be accessible
+to registered users.
+
+
+------>>>>>-------- IsAdminUser------->>>>
+
+The IsAdminUser permission class will deny permission to any user,
+unless user.is_staff is True in which case permission will be allowed.
+
+This permission is suitable if you want your API to only be accessible
+to a subset of trusted administrators.
+
+
+
+----->>>>>> ModelViewSet Class ------->>>>>>
+The ModelViewSet class inherits from GenericAPIView and includes
+implementations for various mixin classes.
+
+The actions provided by the ModelViewSet class are list(), retrieve(), 
+create(), update(), partial_update(), and destroy(). You can use any of 
+the standard attributes or method overrides provided by GenericAPIView
+
+class StudentViewSet(viewsets.ModelViewSet):
+      querysets = Student.objects.all()
+      serializer_class = StudentSerializer
+
+
+
+
+------>>>>>>>>>>> ReadOnlyModelViewSet Class ------>>>>>>
+
+The ReadOnlyModelViewSet class also inherits from GenericAPIView.As 
+with ModelViewSet it also includes implementations for various actions,
+but unlike ModelViewSet only provides the 'read-only' actions, list() and
+retrieve(). You can use any of the standard attributes and method overrides
+available to GenericAPIView
+
+class StudentReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
+      querysets = Student.objects.all()
+      serializer_class = StudentSerializer
+
+
+
+
+----->>>>>>>> Custom Permission ----->>>>>>>
+To implement a custom permission, override BasePermission and implement either, or both, of the following methods:
+-> has_permission(self, request, view)
+-> has_object_permission(self, request, view, obj)
+The methods should return True if the request should be granted access, 
+and False otherwise.
+
+
+
+custompermissions.py
+
+class MyPermission(BasicPermission):
+      def has_permission(self, request, view)
+      
+
+
+
+--------->>>> Custom Authentiation ------>>>>>>
+To implement a custom authentication schemes, subclass
+BaseAuthentication and override the authenticate(self, request)method.
+
+The method should return a two-tuple of (user, auth) if authentication
+succeeds, or None otherwise.
 
