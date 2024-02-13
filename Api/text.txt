@@ -487,3 +487,23 @@ BaseAuthentication and override the authenticate(self, request)method.
 The method should return a two-tuple of (user, auth) if authentication
 succeeds, or None otherwise.
 
+
+------->>>>>> How client can Ask/Create Token-------->>
+
+When using TokenAuthentication, you may want to provide a mechanism for clients to obtain
+a token given the username and password.
+
+REST framework provides a built-in view to provide this behaviour. To use it, add the
+obtain_auth_token view to your URLconf:
+
+from rest_framework.authtoken.views import obtain_auth_token 
+urlpatterns = [
+    path('gettoken/', obtain_auth_token)
+]
+
+The obtain_auth_token view will return a JSON response when valid username and password
+fields are POSTed to the view using form data or JSON:
+
+http POST http://127.0.0.1:8000/gettoken/username="name" password="pass"
+
+It also generates token if the token is not generated for the provided user.
