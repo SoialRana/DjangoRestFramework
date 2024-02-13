@@ -507,4 +507,5 @@ fields are POSTed to the view using form data or JSON:
 http POST http://127.0.0.1:8000/gettoken/username="name" password="pass"
 
 It also generates token if the token is not generated for the provided user.
+git 
 github
