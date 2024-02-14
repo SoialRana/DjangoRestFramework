@@ -507,3 +507,18 @@ fields are POSTed to the view using form data or JSON:
 http POST http://127.0.0.1:8000/gettoken/username="name" password="pass"
 
 It also generates token if the token is not generated for the provided user.
+
+
+
+
+--------->>>>>>> httpie -------->>>>>>>>>>>
+HTTPie (pronounced aitch-tee-pie) is a command line HTTP client. Its goal is to make CLI interaction
+with web services as human-friendly as possible. It provides 
+a simple http command that allows for sending arbitrary HTTP 
+requests using a simple and natural Syntax, and displays colorized output. 
+HTTPie can be used for testing, debugging, and generally interacting with HTTP servers. 
+
+Syntax:- http [flags] [METHOD] URL [ITEM [ITEM]]
+
+How to Install:-
+pip install httpie
