@@ -64,7 +64,8 @@ DjangoRestFramework is a powerful and flexible toolkit for building web APIs
 -> Customizable all the way down-just use regular function based views if you don't need the
  more powerfull features
 -> Extensive documentation and great community support 
--> Used and trusted by internationality recognized companies including Mozilla , Red Hat , Hcroku and Ebentbrite
+-> Used and trusted by internationality recognized companies including Mozilla , Red Hat , 
+  Hcroku and Ebentbrite
 
 ----pip freeze
 ----pip uninstall DjangoRestFramework
@@ -151,6 +152,25 @@ from its superclass with a couple differences:
 
 
 
+------------------ModelSerializer Class---------------
+-The ModelSerializer class provides a shortcut that lets you automatically create a serializer class 
+with fields that correspond to the Model field.
+-The ModelSerializer class is the same as a regular serializer class except that :
+->> It will automatically generate a set of fields for you, based on the model.
+->> It will automatically generate validation for the serializer, such as unique_together validators
+->> It includes simple default implementation of create() and update()
+
+**Create ModelSerializer Class:
+from rest_framework import serializers
+class StudentSerializer(serializers.ModelSerializer)
+      class Meta:
+            model=Student 
+            fields=['id','name','roll','city']
+
+fields='__all__'
+exclude=['roll']
+
+
 
 ------------- Serializer Field--------
 * Serializer fields handle converting primitive values and internal datatypes. They also deal with validating
@@ -183,7 +203,9 @@ Syntax:= CharField(max_length=None,min_length=None,allow_blank=False,trim_whites
 
 
 
----------- Deserialization-----------  Serializers are also responsible for deserialization which means it allows parsed data to be converted back into complex types, after first validating the incoming data 
+---------- Deserialization-----------  Serializers are also responsible for deserialization which
+ means it allows parsed data to be converted back into complex types, after first validating the 
+ incoming data 
 
 Creating Serializer object
 serializer = StudentSerializer(data=parsed_data)
@@ -195,7 +217,8 @@ serializer.validated_data
 serializer.errors
 
 ---->>>> BytesIO()----->>
-A stream implementation using an in memory bytes buffer. It inherits BufferedIOBase. The buffer is discarded when the close()method is called.
+A stream implementation using an in memory bytes buffer. It inherits BufferedIOBase. The buffer 
+is discarded when the close()method is called.
 
 import io 
 stream = io.BytesIO(json_data)
@@ -212,32 +235,34 @@ parsed_data = JSONParser().parse(stream)
 
 from rest_framework import serializers
 class StudentSerializer(serializers.Serializer):
-name = serializers.CharField(max_length=100)
-roll = serializers.IntegerField()
-city = serializers.CharField(max_length=100)
+      name = serializers.CharField(max_length=100)
+      roll = serializers.IntegerField()
+      city = serializers.CharField(max_length=100)
 
-def create(self, validated_data):
-return Student.objects.create(**validate_data)
+      def create(self, validated_data):
+      return Student.objects.create(**validate_data)
 
 
 
 ------->>>>>>>>>>>--------- Update Data 
+
 from rest_framework import serializers
 class StudentSerializer(serializers.Serializer):
-name = serializers.CharField(max_length=100)
-roll = serializers.IntegerField()
-city = serializers.CharField(max_length=100)
-def update(self, instance, validated_data):
-instance.name = validated_data.get('name',instance.name)
-instance.roll = validated_data.get('roll', instance.roll)
-instance.city = validated_data.get('city', instance.city)
-instance.save()
-return instance
+      name = serializers.CharField(max_length=100)
+      roll = serializers.IntegerField()
+      city = serializers.CharField(max_length=100)
+
+      def update(self, instance, validated_data):
+      instance.name = validated_data.get('name',instance.name)
+      instance.roll = validated_data.get('roll', instance.roll)
+      instance.city = validated_data.get('city', instance.city)
+      instance.save()
+      return instance
 
 ----------->>>>>>>>>>>------------ complete Update Data
 
-By default, serializers must be passed values for all required fields or They will be raise validation errors.
-Required All Data from Front End/Client
+By default, serializers must be passed values for all required fields or They will be raise 
+validation errors.Required All Data from Front End/Client
 serializer=StudentSerializer(stu, data=pythondata)
 if serializer.is_valid():
 serializer.save()
@@ -255,9 +280,12 @@ serializer.save()
 
 
 
-Function Based api_view------->>>>
-This wrapper provide a few bits of functionality such you receive Request instance in your view, and adding context to Response objects so that content negotation can be performed.
-The wrapper also provide behaviour such as returning 405 Method Not Allowed responses when appropriate, and handling any ParseError  exceptions that occur when accessing request.data with malformed input.
+---------<<<<Function Based api_view------->>>>
+This wrapper provide a few bits of functionality such you receive Request instance in your view,
+and adding context to Response objects so that content negotation can be performed.
+The wrapper also provide behaviour such as returning 405 Method Not Allowed responses when 
+appropriate, and handling any ParseError  exceptions that occur when accessing request.data with
+ malformed input.
 
 By default only GET method will be excepted. other methods will respond with "405 Method Not Allowed".
 
@@ -299,37 +327,51 @@ def student_create(request):
       
 
 --------->>>>>>>> Request ------->>>>
-REST framework's Request objects provide flexible request parsing that allows you to treat request with JSON data or other media types in the same way that you would normally deal with form data.
+REST framework's Request objects provide flexible request parsing that allows you to treat request
+ with JSON data or other media types in the same way that you would normally deal with form data.
 
-request.data - request.data returns the parsed content of the request body. This is similar to the standard request.POST and request.FILES attributes except that:
--> It includes all parsed conten, including file and non-file inputs.
--> It supports parsing the content of HTTP methods other than POST, meaning that you can access the content of PUT and PATCH request.
--> It supports REST framework's flexible request parsing, rather than just supporting form data. For example you can handle incoming JSON data in the same way that you handle incoming form data.
+request.data - request.data returns the parsed content of the request body. This is similar to the
+ standard request.POST and request.FILES attributes except that:
+-> It includes all parsed content, including file and non-file inputs.
+-> It supports parsing the content of HTTP methods other than POST, meaning that you can access 
+   the content of PUT and PATCH request.
+-> It supports REST framework's flexible request parsing, rather than just supporting form data.
+   For example you can handle incoming JSON data in the same way that you handle incoming form data.
 
 
-request.method -- request.method returns the uppercased string representation of the request's HTTP method.
+request.method -- request.method returns the uppercased string representation of the request's 
+HTTP method.
 Browser-based PUT, PATCH and DELETE forms are transparently supported.
 
 request.query_params --  request.query_params is a more correctly named synonym for request.GET.
 
-For clarity inside your code, we recommend using request.query_params instead of the Django's standard request.GET.Doing so will help keep your codebase more correct and obvious - any HTTP method type may include query perameters, not just GET requests.
+For clarity inside your code, we recommend using request.query_params instead of the Django's 
+standard request.GET.Doing so will help keep your codebase more correct and obvious - any HTTP 
+method type may include query perameters, not just GET requests.
 
 
 
 
 -------------->>>  Response ------>>>>>
-REST framework supports HTTP content negotation by providing a Response class which allows you to return content that can be rendered into multiple content types, depending on the client request.
+REST framework supports HTTP content negotation by providing a Response class which allows you 
+to return content that can be rendered into multiple content types, depending on the client request.
 
-Response objects are initialized with data, which should consist of native Python primitives.REST framework then uses standard HTTP content negotation to determine how it should render the final response content.
+Response objects are initialized with data, which should consist of native Python primitives.REST
+ framework then uses standard HTTP content negotation to determine how it should render the final
+ response content.
 
-Response class simply provides a nicer interface for returning content negotiated Web Api responses, that can be rendered to multiple formats.
+Response class simply provides a nicer interface for returning content negotiated Web Api 
+responses, that can be rendered to multiple formats.
 
 Syntax:- Response(data, status=None, template_name = None, headers=None, content_type=None)
 -> data: The unrendered, serialized data for the  response.
 -> status: A status code for the response, Defaults to 200.
--> template_name: A template name to use only if HTML.Renderer or some other custom template renderer is the accepted renderer for the response.
+-> template_name: A template name to use only if HTML.Renderer or some other custom template 
+   renderer is the accepted renderer for the response.
 -> headers: A dictionary of HTTP headers to use in the response.
--> content_type: The content type of the response. Typically, this will be set automatically by the renderer as determined by content negotiation, but there may be some cases where you need to specify the content type explicitely.
+-> content_type: The content type of the response. Typically, this will be set automatically by 
+   the renderer as determined by content negotiation, but there may be some cases where you need
+   to specify the content type explicitely.
 
 
 
@@ -352,7 +394,8 @@ creadentials to determine if the request should be permitted.
 Authentiation is always run at the very start of the view, before the permission 
 and throttling checks occur, and before any other code is allowed to proceed.
 
-REST framework provides a number of authentication schemes out of the box, and also allows you to implement custom schemes.
+REST framework provides a number of authentication schemes out of the box, and also allows you 
+to implement custom schemes.
 -> Basic Authentiation
 -> Session Authentiation
 -> Token Authentication
@@ -389,7 +432,8 @@ to different parts of the API.
 Permission checks are always run at the very start of the view, before
 any other code is allowed to proceed.
 
-Permission checks will typically use the authentication information in the request.user and request.auth properties to determine if the incoming request should be permitted.
+Permission checks will typically use the authentication information in the request.user and 
+request.auth properties to determine if the incoming request should be permitted.
 
 
 
@@ -409,9 +453,9 @@ Permissions in REST framework are always defined as a list of permission classes
 The AllowAny permission class will allow unrestricted,
 regardless of if the request was authenticated or Unauthenticated.
 
-This permission is not strictly required, since you can achieve the same result by using an empty list or tuple for the permissions setting, but
-you may find it useful to specify this class because it makes the 
-intention explicit.
+This permission is not strictly required, since you can achieve the same result by using an empty
+list or tuple for the permissions setting, but you may find it useful to specify this class 
+because it makes the intention explicit.
 
 
 
@@ -464,7 +508,8 @@ class StudentReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 ----->>>>>>>> Custom Permission ----->>>>>>>
-To implement a custom permission, override BasePermission and implement either, or both, of the following methods:
+To implement a custom permission, override BasePermission and implement either, or both, of the 
+following methods:
 -> has_permission(self, request, view)
 -> has_object_permission(self, request, view, obj)
 The methods should return True if the request should be granted access, 
